@@ -1,0 +1,12 @@
+# 本机审计和当前启动镜像，不发布
+/.local-audit/
+
+# 每台设备独有的校准和安全数据，仅保留本地
+/nvram.img
+/nvdata.img
+/protect1.img
+/protect2.img
+/proinfo.img
+/keystore.img
+/oemkeystore.img
+/userdata.img
