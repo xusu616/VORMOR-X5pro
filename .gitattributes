@@ -1,5 +1,7 @@
 *.md text eol=lf
 *.py text eol=lf
+*.kt text eol=lf
+*.xml text eol=lf
 *.ps1 text eol=lf
 *.sh text eol=lf
 *.json text eol=lf

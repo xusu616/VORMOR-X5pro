@@ -60,6 +60,44 @@ SystemUI：persistent系统应用，`adb install -r`会被Android10拒绝。ROM�
 
 ## 已知问题
 
-相机可用但预览被报告上下倒置180°，尚未修正。没有全面验证扫描头、无线硬件、实际音频输出或长期可靠性。Magisk直接安装的选项不解决双su，需要可选模块统一；PHH界面应用可保留且不影响停用底层daemon。不要使用完全卸载/Format Data解决适配问题。
+基础 ROM 的相机后置预览被报告上下倒置180°，后续独立 APK 已修正 BACK 预览矩阵并获用户确认。基础 SystemUI 在低于288dp时打开电源菜单会因默认尺寸缺失崩溃；后续 overlay 已恢复正常菜单及截图入口。这两项尚未加入基础 ROM。没有全面验证扫描头、无线硬件、实际音频输出或长期可靠性。Magisk直接安装的选项不解决双su，需要可选模块统一；PHH界面应用可保留且不影响停用底层daemon。不要使用完全卸载/Format Data解决适配问题。
 
 底包固定SHA、重建命令、BCB进入REC/系统、照片媒体扫描与回退边界见README。工具/文件系统时间戳可能使重建整体SHA不同，具体输入/内容和文件系统检查记录仍完整。
+
+## 补充：Root管理器与界面隐藏
+
+`Magisk-v30.6.apk` 为官方原始管理器APK，附件SHA与官方Release digest一致。新空白data需自行安装管理器，再按README准备Magisk环境。模块v1.1使用指向正在运行Magisk的真实命令链接，修正旧布局仍触发“其他su”的提示；不修改Magisk检测代码。
+
+隐藏PHH Superuser入口：`adb shell pm disable-user --user 0 me.phh.superuser`。仅停用UI包，不删除应用数据。恢复：`adb shell pm enable --user 0 me.phh.superuser`。本机已执行并确认没有桌面Activity，PHH daemon stopped、标准su仍是MAGISKSU。
+
+## 补充：Apps2SD p3 与 APK 链接
+
+补充源码包含按本人 SD 身份生成 Magisk 早期挂载模块的脚本、Apps2SD 16 外部挂载配置脚本和独立 Kotlin 验证应用。仅格式化本机已明确指定的 p3；p1 上正在使用的 Android 10 data/cache 和 p2 保留，分区表、p1 首扇区与 p2 的前后校验一致。
+
+独立验证包已经通过 APK 链接与正常重启，原路径指向 `/data/sdext2/apk/`，APK 与测试文件校验保持一致，内部计数跨重启保留。只验证 APK；Data、ODEX、lib 和关键系统应用链接不在本次实测范围。每张卡的 CID/UUID 配置与生成模块仅保留本人私有，不上传通用附件。详见 `docs/apps2sd-external-mount.md`。
+
+## 补充：相机预览APK
+
+`Camera2-M19X6-rear-preview180.apk` 仅用于本PHH v222相机。安装：`adb install -r --no-incremental Camera2-M19X6-rear-preview180.apk`，保留相机数据。最终修正在 `CaptureModule.updatePreviewTransform(int,int,boolean)` 对 `mCameraFacing == BACK` 的矩阵追加 `postRotate(180, width/2, height/2)`，前置、getPreviewOrientation 和 JPEG方向方法不变。使用者已确认前后预览正常，此前JPEG正向（Orientation=1）；触摸对焦、横屏和视频仍需验证。它不是全局相机HAL修复。APK SHA：`48c8ce73270bdbc5bf54c8fa9f85430ed6e61b9ffe5ca8e4c43b25ff5eb6147a`。完整安装与主机重建见[相机说明](camera-preview-experiment.md)。
+
+`VORMOR-X5pro-Android10-beta1-Extras.zip` 保存后续Root界面隐藏说明、相机脚本与当前使用文档。基础ROM和其原SHA不变；新补充文件核对`SHA256SUMS-extras`。
+
+## 补充：截图菜单资源覆盖
+
+`SystemUI-M19X6-small-width-overlay.apk` 只补齐 PHH v222 在低于288dp时缺失的11个电源菜单尺寸；本机272dp界面不再因 InflateException 回退到没有截图的 Legacy 菜单。已观察到“屏幕截图”入口恢复。它是独立 overlay，基础 ROM 尚未包含。
+
+```powershell
+& $adb -s $serial install -r --no-incremental .\SystemUI-M19X6-small-width-overlay.apk
+& $adb -s $serial shell cmd overlay enable --user 0 xusu616.vormor.systemui.smallwidth
+& $adb -s $serial shell cmd overlay list --user 0
+```
+
+包名 `xusu616.vormor.systemui.smallwidth`，无桌面图标。SHA：`c554f09b7cb271c398207327997dd53159ae65f769e7f4c7c77f959f4368b802`。禁用该 overlay 可撤销，不清 SystemUI 数据；构建和验证见[截图菜单说明](screenshot-menu-overlay.md)。
+
+## 补充：照明应用1.1
+
+`M19X6-Illumination-1.1.apk` 使用原厂 legacy camera1 torch 通道，不要求Root。用 `adb install -r --no-incremental M19X6-Illumination-1.1.apk` 安装，打开“词典笔照明”允许相机权限，在快捷设置编辑页添加“照明”。应用按钮、通知或磁贴可以开关；开灯占用camera1，关闭后释放。
+
+v1.1已实机替换安装并保留数据，磁贴off→on→off与驱动FLASHLIGHT ENABLE/DISABLE对应，用户确认修复。后续HAL断开时停止服务并更新状态，不自动重试。SHA：`143f85cb8f9447bd34ae8e0c22b4c3f0fe48e34e33ebd97e23fbb86046399b58`。源代码、Kotlin主机编译命令和已知限制见[照明说明](illumination.md)。
+
+以上后续 APK 与资源源文件属于独立补充，未加入基础 beta1 ROM，不改变其 system/boot SHA。它们不包含 SD p3 格式化或原 Apps2SD 数据迁移；该存储操作需另行备份、确认具体分区并独立验证，不作为此 Release 已完成结果。

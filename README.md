@@ -12,7 +12,8 @@
 
 已知问题：
 
-- 相机可以打开，但已报告预览上下颠倒 180°；未完成方向修正。
+- 基础 ROM 的相机后置预览被报告倒置180°。后续独立 Camera2 APK 仅修正 BACK 预览矩阵，用户已确认前、后预览正常；横屏、触摸对焦和视频仍需验证。
+- 小宽度下原 SystemUI 电源菜单会因缺少默认尺寸崩溃并回退到没有截图的 Legacy 菜单。独立资源 overlay 已恢复正常菜单和截图入口；基础 ROM 尚未包含它。
 - GSI 自带 PHH Superuser 与 boot 中的 Magisk 30.6 同时存在。完整第三方模块兼容仍需逐个验证；本 Release 另提供可选 Magisk-only 模块统一标准 su 入口。
 - 尚未全面验证扫描头、蓝牙、所有无线连接、扬声器实际输出和长期运行。
 - 原 Android 8.1 应用数据不会自动迁移到新系统。新系统的 data/cache 位于独立 SD 镜像，**必须保留 SD 卡**。
@@ -49,6 +50,7 @@ c62c1456714cdd1201ee41b7fb5dd68862131e146f523ded721f86136fe481d6
 - `webview-aosp-141.0.7366.2-arm-gsi-testkey.apk`：API29/ARMv7 的 WebView 更新。
 - `magiskboot-windows.exe`：此次重建使用的 Windows 移植工具；来源见下文。
 - `M19X6-Magisk-only-su-v1.1.zip`：可选 Magisk 模块，停用 PHH daemon并统一标准 su 入口。
+- 后续独立补充：`Camera2-M19X6-rear-preview180.apk`、`SystemUI-M19X6-small-width-overlay.apk`、`M19X6-Illumination-1.1.apk`，用法见下文；基础 beta1 ROM 不含这三个 APK。
 - `SHA256SUMS`、`release-manifest.json`：附件校验与验证范围。
 
 先下载同一 Release 的文件并核对 SHA256SUMS。镜像放 Release，不放 Git 历史。**不发布** nvram/nvdata、个人 GPT/BCB 快照、测试 userdata/cache、预授权 ADB keys、个人照片或设备日志。历史备份仓库曾有 NVRAM 提交；本次没有改写那段历史。
@@ -117,6 +119,25 @@ $serial = "填写你自己的ADB序列号"
 ```
 
 确认 Current WebView 为 `com.android.webview, 141.0.7366.2`，relro started/finished 均为 1，并实际打开网页。不要先卸载旧 WebView。测试 HTML 见 `docs/webview-render-check.html`；本机已用预装 WebView Shell 验证。
+
+### 后续相机、截图菜单和照明补充
+
+这三项独立 APK 不改变已经发布的基础 ROM、system／boot 哈希，使用与本 PHH v222 兼容的附件，安装时保留应用数据：
+
+| 附件 | 作用和当前验证 | 使用／重建 |
+| --- | --- | --- |
+| `Camera2-M19X6-rear-preview180.apk` | 只对 CaptureModule 的 BACK 预览矩阵追加180°；用户确认前后预览正常，JPEG方向方法未改 | [相机预览说明](docs/camera-preview-experiment.md) |
+| `SystemUI-M19X6-small-width-overlay.apk` | 补齐低于288dp的11个默认尺寸，恢复电源菜单和截图入口；不替换 SystemUI 主 APK | [截图菜单 overlay](docs/screenshot-menu-overlay.md) |
+| `M19X6-Illumination-1.1.apk` | legacy camera1 照明通道，通知和快捷磁贴开关；用户确认修复，日志对应驱动 ENABLE/DISABLE | [照明使用与 Kotlin 构建](docs/illumination.md) |
+
+```powershell
+& $adb -s $serial install -r --no-incremental .\Camera2-M19X6-rear-preview180.apk
+& $adb -s $serial install -r --no-incremental .\SystemUI-M19X6-small-width-overlay.apk
+& $adb -s $serial shell cmd overlay enable --user 0 xusu616.vormor.systemui.smallwidth
+& $adb -s $serial install -r --no-incremental .\M19X6-Illumination-1.1.apk
+```
+
+打开“词典笔照明”授予相机权限，再在快捷设置编辑页添加“照明”。开灯会占用 camera1，拍照前先关闭。overlay 没有桌面图标；通过 `cmd overlay list --user 0` 核对 `[x]`。若需要撤销，禁用 `xusu616.vormor.systemui.smallwidth` 即可，不清 SystemUI 数据。后续附件核对独立 Extras 校验清单，基础 `SHA256SUMS` 不会因此重新定义旧 ROM 文件。
 
 ### SystemUI 壁纸修正
 
@@ -189,6 +210,35 @@ PHH Superuser 管理 PHH 的 Root 授权；Magisk 模块由 Magisk 加载。卸�
 ```powershell
 & $adb -s $serial shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///storage/emulated/0/Pictures/photo.png
 ```
+
+
+隐藏 PHH Superuser 的桌面入口可以停用界面包，不卸载、不清数据：
+
+```powershell
+& $adb -s $serial shell pm disable-user --user 0 me.phh.superuser
+# 要恢复入口时：
+& $adb -s $serial shell pm enable --user 0 me.phh.superuser
+```
+
+若新 SD data 尚未安装 Magisk 管理器，Release 的 `Magisk-v30.6.apk` 为官方原包，SHA 已与官方资产 digest 核对：
+
+```powershell
+& $adb -s $serial install -r .\Magisk-v30.6.apk
+```
+
+boot 中的 Magisk 版本是30.6。若管理器要求补齐环境，应先保存当前适配boot并检查重打包后关键文件，不能把“取消保留启动校验”当成双Root修复。可选模块需完整Magisk环境；它不捆绑或清除管理器数据。
+
+内置相机的最终独立补丁是 BACK-only `CaptureModule.updatePreviewTransform` 矩阵旋转，详见[相机说明](docs/camera-preview-experiment.md)。不要使用早期同时修改所有镜头 getPreviewOrientation 的试验包。截图和照明补充同样未写入基础 beta1 ROM，也不包含 SD 第三分区格式化或原 Apps2SD 数据迁移。
+
+## Apps2SD 链接到 SD p3
+
+本机已仅重新格式化旧 Apps2SD 的 p3，保留 p1 上当前 Android 10 的 data/cache 镜像和 p2。新 ext4 p3 由专用 Magisk 模块在 post-fs-data 阶段挂到 `/data/sdext2`；卡的 CID、容量、分区边界和新 UUID 必须匹配。生成的身份配置和模块仅保留本人私有，Release 提供生成脚本。
+
+Apps2SD 16 的原 Magisk 接口使用旧路径，“普通方式”还会尝试接管 debuggerd。这里使用 `scripts/configure_apps2sd_external_mount.py` 登记已有外部挂载，并关闭 Apps2SD 自己的自动挂载和自动软重启。脚本操作应用内部的 `databases/apps2sd.db`；`/data/apps2sd/apps2sdpro.db` 只是会被重新导出的原生工具副本。
+
+已通过独立测试包的 **APK 链接和正常重启**：原 APK 路径成为指向 p3 的符号链接，APK 校验值和内部测试文件内容保持一致，启动计数跨重启增加。Data、ODEX 和 lib 链接尚未验证，请先只选择 APK，不选择全选或系统／Root 工具。Apps2SD 的“操作前停用”选项会移除桌面图标，本次只在独立验证包上测试。
+
+详细配置、实际菜单步骤、构建与验证范围见 [Apps2SD 说明](docs/apps2sd-external-mount.md)。已经按本机流程完成配置后，使用 Apps2SD 的“链接应用到 SD 卡 → 选择应用 → 链接/断开”，只勾选 APK 再完成。
 
 ## 来源和许可证
 

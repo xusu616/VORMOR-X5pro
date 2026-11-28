@@ -74,6 +74,13 @@
     "derive owner from ro.boot.serialno at runtime",
     "protect Apps2SD p3 when its block node exists"
   ],
+  "optional_systemui": {
+    "source_sha256": "defbee195c3590cfc458fb26d5cbbe9fa78e146b9b4ae7e51fabfb67b17ddf75",
+    "signed_patch_sha256": "226c3de42b08069a7053abcb93a620c8d6c2510b43294407857e1053a1d3a4cb",
+    "transform": "Terminate EglHelper.createEglContext attributes before unsupported EGL_IMG_context_priority",
+    "private_signing_keys_included": false,
+    "apk_is_external_optional_input": true
+  },
   "not_packaged": [
     "userdata",
     "cache image",

@@ -1,0 +1,25 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="xusu616.vormor.illumination"
+    android:versionCode="2" android:versionName="1.1">
+    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="29" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="true" />
+    <application android:label="词典笔照明"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:name=".TorchActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name=".TorchService" android:exported="false" />
+        <service android:name=".TorchTileService" android:label="照明"
+            android:icon="@android:drawable/ic_menu_camera" android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <meta-data android:name="android.service.quicksettings.ACTIVE_TILE" android:value="true" />
+            <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
+        </service>
+    </application>
+</manifest>
