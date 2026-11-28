@@ -1,0 +1,114 @@
+{
+  "format_version": 1,
+  "entries": [
+    {
+      "path": ".backup/.magisk",
+      "operation": "change",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/.backup/.magisk",
+      "sha256": "ba2788e49d662f0f55976e1146dc33e48b19d10f6a84f32fe2d81cc9a4cda5ea"
+    },
+    {
+      "path": "android10-prepare-test.sh",
+      "operation": "add",
+      "mode": 33256,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/android10-prepare-test.sh",
+      "sha256": "619fb7febf53c7b6f89c8157d2a2f35bd2df6618daf66928e1e464faaa5b3e4b"
+    },
+    {
+      "path": "android10-vendor-lib",
+      "operation": "add",
+      "mode": 16877,
+      "uid": 0,
+      "gid": 0,
+      "source": null
+    },
+    {
+      "path": "android10-vendor-lib/libeffectsconfig.so",
+      "operation": "add",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/android10-vendor-lib/libeffectsconfig.so",
+      "sha256": "42e35b731a3116d27b1c253704899b70f50357dd26ca7f044697b6e2cb289ac5"
+    },
+    {
+      "path": "android10-watch-kernel.sh",
+      "operation": "add",
+      "mode": 33256,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/android10-watch-kernel.sh",
+      "sha256": "153cdd8b39f5fa0f59c056479ea5f9b00aa1d2553c17bda893562bf6aca31385"
+    },
+    {
+      "path": "fstab.android10-trial",
+      "operation": "add",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/fstab.android10-trial",
+      "sha256": "19f3d353d8727b9819ac25ec6a1b7cc33391e47f3273547d203fc3d2d61c0ccc"
+    },
+    {
+      "path": "init.android10-trial.rc",
+      "operation": "add",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/init.android10-trial.rc",
+      "sha256": "19af2b26d0a5f8876928b68d42ffa16d87bab00e2bd80d4895760c6312b02796"
+    },
+    {
+      "path": "init.environ.rc",
+      "operation": "change",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/init.environ.rc",
+      "sha256": "1da90c30a2f44eadcf444fd9df78f1d049839edc2d101ffdbcfcbb879ac14711"
+    },
+    {
+      "path": "init.mt6580.rc",
+      "operation": "add",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/init.mt6580.rc",
+      "sha256": "fe8993f9e0632dfeb5babf44802609e8afa9c068f9065b7771b00c180641b1f6"
+    },
+    {
+      "path": "init.rc",
+      "operation": "change",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/init.rc",
+      "sha256": "b9006f450ad08ee4f9ca97a0763666cb86ca30d777d2520ab96905b258e9bd20"
+    },
+    {
+      "path": "init.zygote32.rc",
+      "operation": "change",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/init.zygote32.rc",
+      "sha256": "2cf81dcb80d8d449b690ca303fe4a014404ae5fc5652f391b8abfea9e40d0704"
+    },
+    {
+      "path": "sepolicy",
+      "operation": "add",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "source": "ramdisk/sepolicy",
+      "sha256": "0ffb4604133df7b30e56359695bd99c94146004b5d8e9ba3fa719e839a6478ee"
+    }
+  ],
+  "removed": [],
+  "preserve_other_base_members": true
+}

@@ -1,0 +1,87 @@
+{
+  "policy": {
+    "file": "ramdisk/sepolicy",
+    "sha256": "0ffb4604133df7b30e56359695bd99c94146004b5d8e9ba3fa719e839a6478ee",
+    "policy_version": 30,
+    "compiler": "Debian secilc 3.4-1 with libsepol2 3.4-2.1",
+    "flags": [
+      "-m",
+      "-M",
+      "true",
+      "-G",
+      "-N",
+      "-c",
+      "30"
+    ],
+    "inputs": [
+      {
+        "path": "PHH:/etc/selinux/plat_sepolicy.cil",
+        "sha256": "73920e808da484284f7c9bd662d26b30a90824f6641557d4e36eeda0be613abe"
+      },
+      {
+        "path": "PHH:/etc/selinux/mapping/27.0.cil",
+        "sha256": "f10e920f397ec38f7ba4ee10fd185841bbcf4d7dbb16658d9248f126db2bd48e"
+      },
+      {
+        "path": "own-vendor:/etc/selinux/nonplat_sepolicy.cil",
+        "sha256": "591ae872fd87ff9b5a9fd1f03d51ba1c9a88699e7a8cdc667906e6d6caedc3e9"
+      }
+    ],
+    "secilc_deb_sha256": "2b3a7061f9084db4a8f0d9d0755bd801947c4c5a31aa671e5bbe53c22b0dd24b",
+    "libsepol_deb_sha256": "b998946bb9818a97b387a962826caae33bc7fdcb6d706b2782c0470510be6b48"
+  },
+  "compatibility_libraries": [
+    {
+      "path": "/lib/libaed.so",
+      "source": "compat/libaed.so",
+      "sha256": "297b87daa919d29524e2dcd5a95a569577ec8aba248fa4b728d3bc28e90b3d68",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "selinux": "u:object_r:system_lib_file:s0"
+    },
+    {
+      "path": "/lib/libprogrambinary.so",
+      "source": "compat/libprogrambinary.so",
+      "sha256": "b88c11c8148aa3de87a53ef498c06d98553e01a7266202452464c2fccce6e034",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "selinux": "u:object_r:system_lib_file:s0"
+    },
+    {
+      "path": "/lib/vendor.mediatek.hardware.camera.device@1.1.so",
+      "source": "compat/vendor.mediatek.hardware.camera.device@1.1.so",
+      "sha256": "33937f2056c13a52df8ad0a7b199214a4e0212a3d9317f0474fb34945cb6786e",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "selinux": "u:object_r:system_lib_file:s0"
+    },
+    {
+      "path": "own-system:/lib/libeffectsconfig.so",
+      "file": "ramdisk/android10-vendor-lib/libeffectsconfig.so",
+      "sha256": "42e35b731a3116d27b1c253704899b70f50357dd26ca7f044697b6e2cb289ac5"
+    }
+  ],
+  "magisk": {
+    "version": "30.6",
+    "source_tag": "v30.6",
+    "source_commit": "ccb264f33aa245aba26a9b2508a54c40041eb46e",
+    "behavior": "Preserve the checked Magisk-patched base boot; clear PREINITDEVICE lookup only."
+  },
+  "public_helper_adaptations": [
+    "derive owner from ro.boot.serialno at runtime",
+    "protect Apps2SD p3 when its block node exists"
+  ],
+  "not_packaged": [
+    "userdata",
+    "cache image",
+    "nvram",
+    "nvdata clone",
+    "calibration",
+    "ADB authorization keys",
+    "device logs"
+  ],
+  "validation_limit": "Public helper adaptations are host validated; the tested trial8 binary used a fixed local owner and mandatory p3."
+}

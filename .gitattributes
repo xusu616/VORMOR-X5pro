@@ -1,0 +1,15 @@
+*.md text eol=lf
+*.py text eol=lf
+*.ps1 text eol=lf
+*.sh text eol=lf
+*.json text eol=lf
+*.rc text eol=lf
+*.prop text eol=lf
+*.html text eol=lf
+*.img binary
+*.apk binary
+*.so binary
+sepolicy binary
+# Preserve the byte-verified vendor ramdisk configuration as supplied.
+configs/ramdisk/*.rc whitespace=-trailing-space,-blank-at-eof
+updater-script text eol=lf

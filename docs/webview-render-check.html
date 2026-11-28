@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WebView 验证</title>
+<style>
+body { margin: 0; padding: 16px; font: 18px sans-serif; color: #17212b; background: #f5f8fa; }
+h1 { font-size: 25px; line-height: 1.4; }
+p { line-height: 1.5; overflow-wrap: anywhere; }
+#result { padding: 12px; border: 2px solid #7a8590; background: white; }
+.pass { color: #146b38; }
+.fail { color: #ab2020; }
+</style>
+<h1>WebView 页面验证</h1>
+<p id="version">正在读取浏览器版本…</p>
+<div id="result">正在执行 JavaScript…</div>
+<p>Android 10 · VORMOR X5pro</p>
+<script>
+(async () => {
+  const result = document.getElementById('result');
+  const version = navigator.userAgent.match(/Chrome\/([\d.]+)/)?.[1];
+  document.getElementById('version').textContent = 'Chromium ' + version;
+  try {
+    const sorted = [3, 1, 2].toSorted().join(',') === '1,2,3';
+    const hasOwn = Object.hasOwn({ ok: true }, 'ok');
+    const any = await Promise.any([Promise.resolve('ok')]) === 'ok';
+    const success = version === '141.0.7366.2' && sorted && hasOwn && any;
+    result.className = success ? 'pass' : 'fail';
+    result.innerHTML = (success ? '<strong>渲染与脚本验证通过</strong>' : '<strong>验证未通过</strong>')
+      + '<p>JavaScript：PASS<br>toSorted：' + (sorted ? 'PASS' : 'FAIL')
+      + '<br>Object.hasOwn：' + (hasOwn ? 'PASS' : 'FAIL')
+      + '<br>Promise.any：' + (any ? 'PASS' : 'FAIL') + '</p>';
+    console.log('CODEX_WEBVIEW_RENDER_CHECK ' + JSON.stringify({ success, version, sorted, hasOwn, any }));
+  } catch (error) {
+    result.className = 'fail';
+    result.textContent = '验证失败：' + error;
+    console.error('CODEX_WEBVIEW_RENDER_CHECK_FAILED ' + error);
+  }
+})();
+</script>
+</html>

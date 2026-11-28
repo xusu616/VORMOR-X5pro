@@ -1,0 +1,59 @@
+on early-init
+    setprop ro.vndk.version 27
+    write /dev/kmsg "android10-trial8: early-init reached; monolithic policy already loaded"
+
+# Known M19_X6 partition paths. Original userdata is never mounted as /data.
+on early-fs
+    write /dev/kmsg "android10-trial8: early-fs start"
+    mount ext4 /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/system /system ro wait
+    mount ext4 /dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name/vendor /vendor ro wait
+    mkdir /mnt/runtime/full 0755 root root
+    mkdir /mnt/runtime/full/self 0755 root root
+    mkdir /apex 0755 root root
+    mount tmpfs tmpfs /apex mode=0755,uid=0,gid=0
+    restorecon /apex
+    # Legacy vendor on-init preload must not reach the first Q executable.
+    # PHH's existing post-fs cleanup occurs after this bootstrap phase.
+    export LD_PRELOAD :
+    write /dev/kmsg "android10-trial8: legacy preload cleared before APEX"
+    write /dev/kmsg "android10-trial8: before APEX bootstrap"
+    exec -- /system/bin/apexd --bootstrap
+    write /dev/kmsg "android10-trial8: APEX bootstrap exec returned"
+    export ANDROID_RUNTIME_ROOT /apex/com.android.runtime
+    export ANDROID_TZDATA_ROOT /apex/com.android.tzdata
+    symlink /system/product /product
+    write /dev/kmsg "android10-trial8: before isolated storage preparation"
+    exec u:r:su:s0 root root -- /system/bin/sh /android10-prepare-test.sh
+    write /dev/kmsg "android10-trial8: storage helper exec returned"
+
+on property:sys.android10.test_storage_ready=1
+    write /dev/kmsg "android10-trial8: isolated data ready"
+    start codex-a10-logcat
+    start codex-a10-kernel-log
+    start codex-a10-kernel-follow
+
+service codex-a10-logcat /system/bin/logcat -b all -v threadtime -f /data/local/tmp/android10-trial2/logcat.txt -r 1024 -n 2
+    class core
+    user root
+    group root log
+    seclabel u:r:su:s0
+    disabled
+
+service codex-a10-kernel-log /system/bin/sh -c "/system/bin/dmesg > /data/local/tmp/android10-trial2/kernel-storage-ready.txt"
+    user root
+    group root log
+    seclabel u:r:su:s0
+    disabled
+    oneshot
+
+# Native --follow starts at the verified storage gate and captures later failures.
+service codex-a10-kernel-follow /system/bin/sh /android10-watch-kernel.sh
+    class core
+    user root
+    group root log
+    seclabel u:r:su:s0
+    disabled
+    oneshot
+
+on property:sys.boot_completed=1
+    stop codex-a10-kernel-follow

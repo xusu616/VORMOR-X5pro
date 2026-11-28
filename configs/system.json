@@ -1,0 +1,57 @@
+{
+  "format_version": 1,
+  "compatibility_libraries": [
+    {
+      "path": "/lib/libaed.so",
+      "source": "compat/libaed.so",
+      "sha256": "297b87daa919d29524e2dcd5a95a569577ec8aba248fa4b728d3bc28e90b3d68",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "selinux": "u:object_r:system_lib_file:s0"
+    },
+    {
+      "path": "/lib/libprogrambinary.so",
+      "source": "compat/libprogrambinary.so",
+      "sha256": "b88c11c8148aa3de87a53ef498c06d98553e01a7266202452464c2fccce6e034",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "selinux": "u:object_r:system_lib_file:s0"
+    },
+    {
+      "path": "/lib/vendor.mediatek.hardware.camera.device@1.1.so",
+      "source": "compat/vendor.mediatek.hardware.camera.device@1.1.so",
+      "sha256": "33937f2056c13a52df8ad0a7b199214a4e0212a3d9317f0474fb34945cb6786e",
+      "mode": 33188,
+      "uid": 0,
+      "gid": 0,
+      "selinux": "u:object_r:system_lib_file:s0"
+    }
+  ],
+  "text_patches": [
+    "/etc/init/init.legacy-gsi.rc",
+    "/etc/init/apex-setup.rc",
+    "/etc/prop.default"
+  ],
+  "removed": [
+    "/etc/init/twrp.rc",
+    "/bin/twrp.sh"
+  ],
+  "archive_cil": {
+    "bytes": 1411291,
+    "source": "/etc/selinux/plat_sepolicy.cil",
+    "target": "/etc/selinux/plat_sepolicy.cil.offline-source",
+    "sha256": "73920e808da484284f7c9bd662d26b30a90824f6641557d4e36eeda0be613abe"
+  },
+  "optional_systemui": {
+    "path": "/product/priv-app/SystemUI/SystemUI.apk",
+    "source_sha256": "defbee195c3590cfc458fb26d5cbbe9fa78e146b9b4ae7e51fabfb67b17ddf75",
+    "source_bytes": 20831562,
+    "patched_sha256": "226c3de42b08069a7053abcb93a620c8d6c2510b43294407857e1053a1d3a4cb",
+    "mode": 33188,
+    "uid": 0,
+    "gid": 0,
+    "selinux": "u:object_r:system_file:s0"
+  }
+}

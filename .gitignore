@@ -10,3 +10,9 @@
 /keystore.img
 /oemkeystore.img
 /userdata.img
+
+# 构建输出、Python 缓存和发布附件只放 Release
+/dist/
+/build-output/
+**/__pycache__/
+*.pyc

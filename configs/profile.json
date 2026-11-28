@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "device_profile": "VORMOR-X5pro M19_X6 / MT6580 / Android 8.1 vendor API27 / ARMv7 Binder32",
+  "base_boot_sha256": "8aee6807955c700946a031837266ba0364c549b6a150374cac4fab924d21c35b",
+  "boot_partition_bytes": 16777216,
+  "system_partition_bytes": 5477761024,
+  "kernel_sha256": "afd1b9ad1fb6a27eb319944397f9b2de2eb87c809942701527e44674338dd3c9",
+  "dtb_sha256": "210da8721c5f9869cf6387b9bb91fa9e610f6fd32d10b41b67eb144905229630",
+  "vendor_cil_sha256": "591ae872fd87ff9b5a9fd1f03d51ba1c9a88699e7a8cdc667906e6d6caedc3e9",
+  "phh_system": {
+    "release": "v222",
+    "variant": "system-quack-arm-aonly-vanilla",
+    "url": "https://github.com/phhusson/treble_experimentations/releases/download/v222/system-quack-arm-aonly-vanilla.img.xz",
+    "xz_sha256": "c62c1456714cdd1201ee41b7fb5dd68862131e146f523ded721f86136fe481d6",
+    "sparse_sha256": "ff300b869d7c6199f9196abfff62a7219dd06532d28115b17742172fc46962e7",
+    "raw_sha256": "1a8982bbc9534648f85e89946208218594b8247f8e41b02ba76327b37b08eb0d",
+    "raw_bytes": 1131864064
+  },
+  "known_windows_magiskboot_sha256": "2d3f9dcdbf6fd9b8a5c8ab333c7434f43d8916ab29da81d6f9dc37f0731e8ea2"
+}
